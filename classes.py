@@ -41,14 +41,9 @@ class Grid:
 
     def get_mouse(self, x, y, player):
         if self.get_cell_value(x, y) == 0:
-            self.switch_player = True
-            if player == "X":
-                self.set_cell_value(x, y, "X")
-            elif player == "O":
-                self.set_cell_value(x, y, "O")
+            self.set_cell_value(x, y, player)          
             self.grid_check(x, y, player)
-        else:
-            self.switch_player = False
+        
         
     def is_within_bounds(self, x, y):
         return x >= 0 and x < 3 and y >= 0 and y < 3
