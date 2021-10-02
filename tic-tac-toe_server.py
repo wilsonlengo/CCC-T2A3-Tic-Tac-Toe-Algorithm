@@ -1,21 +1,24 @@
+# Required modules and dependencies
 import pygame
 import threading
 import socket
 from classes import Grid
 import os
-os.environ['SDL_VIDEO_WINDOW_POS'] = '200, 100'
+os.environ['SDL_VIDEO_WINDOW_POS'] = '200, 100' # Positioning game window to suit the screen
 
-surface = pygame.display.set_mode((600,600))
-pygame.display.set_caption("Tic-Tac-Toe")
+surface = pygame.display.set_mode((600,600)) # Resized window to 600x600
+pygame.display.set_caption("Tic-Tac-Toe") # Game name (window)
 
+# Seperate thread created to send and receive data from client
 def create_thread(target):
+    """Function for creating a thread"""
     thread = threading.Thread(target=target)
     thread.daemon = True
     thread.start()
 
 
 
-# Creating socket for server
+# Creating socket for server by defining host and port
 HOST = '127.0.0.1'
 PORT = 5555
 connection_established = False
@@ -26,10 +29,11 @@ server_socket.bind((HOST, PORT))
 server_socket.listen(1)
 
 def receive_data():
+    """A function to receive data from the client, applying the switch turn logic"""
     global turn
     while True:
-        data = connection.recv(1024).decode()
-        data = data.split('-')
+        data = connection.recv(1024).decode() # Receive data from client
+        data = data.split('-') # Formatting of data
         x, y = int(data[0]), int(data[1])
         if data[2] == 'yourturn':
             turn = True
@@ -40,6 +44,7 @@ def receive_data():
         print(data)
 
 def waiting_connection():
+    """Function to activate when server is listening until client connects"""
     global connection_established, connection, address
     connection, address = server_socket.accept() # Awaiting connection
     print("Client successfully connected")
@@ -77,7 +82,7 @@ while running:
 
            
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE and grid.game_over: # reset game if one player wins or result is draw
+            if event.key == pygame.K_SPACE and grid.game_over: # reset game if one player wins or result is draw OR if either player presses the SPACEBAR key
                 grid.reset_grid()
                 grid.game_over = False
                 playing = 'True'

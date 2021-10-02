@@ -1,19 +1,22 @@
+# Required modules + dependencies
 import pygame
 from classes import Grid
 import socket
 import threading
 import os
-os.environ['SDL_VIDEO_WINDOW_POS'] = '850, 100'
+os.environ['SDL_VIDEO_WINDOW_POS'] = '850, 100' # Positioning game window to suit screen
 
-surface = pygame.display.set_mode((600,600))
-pygame.display.set_caption("Tic-Tac-Toe")
+surface = pygame.display.set_mode((600,600)) # Resized window to 600x600
+pygame.display.set_caption("Tic-Tac-Toe") # Game name (window)
 
 
 def create_thread(target):
+    """Function for creating a thread"""
     thread = threading.Thread(target=target)
     thread.daemon = True
     thread.start()
 
+# Creating socket for server by defining host and port
 HOST = "127.0.0.1"
 PORT = 5555
 
@@ -21,10 +24,11 @@ server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_socket.connect((HOST, PORT))
 
 def receive_data():
+    """Function receive data from the server, applying the switch turns logic"""
     global turn
     while True:
-        data = server_socket.recv(1024).decode()
-        data = data.split('-')
+        data = server_socket.recv(1024).decode() # Receiving data from server
+        data = data.split('-')  # Format of data splitting
         x, y = int(data[0]), int(data[1])
         if data[2] == 'yourturn':
             turn = True
@@ -34,10 +38,11 @@ def receive_data():
             grid.set_cell_value(x, y, 'X')
         print(data)
 
+# Runs blocking functions in separate thread
 create_thread(receive_data)
 
 
-grid = Grid()
+grid = Grid() 
 
 
 running = True
@@ -75,6 +80,6 @@ while running:
 
     surface.fill((0, 0, 0))
 
-    grid.draw(surface)
+    grid.draw(surface) # Draws grid
 
     pygame.display.flip()

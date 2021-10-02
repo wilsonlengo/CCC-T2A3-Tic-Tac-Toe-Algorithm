@@ -1,12 +1,14 @@
 import pygame
 import os
 
-letterX = pygame.image.load(os.path.join('img', 'x.png'))
-letterO = pygame.image.load(os.path.join('img', 'o.png'))
+letterX = pygame.image.load(os.path.join('img', 'x.png')) # Loading image of "X"
+letterO = pygame.image.load(os.path.join('img', 'o.png')) # Loading imahe of "O"
 
 
 class Grid:
+    """Class to define the game-board functions and logic"""
     def __init__(self):
+        """Constructor for the board"""
         self.grid_lines = [((0,200), (600,200)),  # first horizontal line
                            ((0,400), (600,400)),  # second horizontal line
                            ((200,0), (200,600)),  # first vertical line
@@ -22,6 +24,7 @@ class Grid:
     
 
     def draw(self, surface):
+        """Function that draws the lines in grid"""
         for line in self.grid_lines:
             pygame.draw.line(surface, (200, 200, 200), line[0], line[1], 2)
         
@@ -34,21 +37,26 @@ class Grid:
         
 
     def get_cell_value(self, x, y):
+        """Getter for grid cells"""
         return self.grid[y][x]
     
     def set_cell_value(self, x, y, value):
+        """Setter for the grid cells"""
         self.grid[y][x] = value
 
     def get_mouse(self, x, y, player):
+        """Method to get mouse position of a player choice on grid"""
         if self.get_cell_value(x, y) == 0:
             self.set_cell_value(x, y, player)          
             self.grid_check(x, y, player)
         
         
     def is_within_bounds(self, x, y):
+        """Checking if player choice is actually on the board"""
         return x >= 0 and x < 3 and y >= 0 and y < 3
     
     def grid_check(self, x, y, player):
+        """Function that defines Tic-Tac-Toe game logic (3 in row = Win)"""
         count = 1
         for index, (dirx, diry) in enumerate(self.search_direction):
             if self.is_within_bounds(x+dirx, y+diry) and self.get_cell_value(x+dirx, y+diry) == player:
@@ -86,7 +94,7 @@ class Grid:
                             break
                     else:
                         count = 1
-        
+        # Determining the winner
         if count == 3:
             print(player, 'wins!')
             self.game_over = True
@@ -94,6 +102,7 @@ class Grid:
             self.game_over = self.full_grid()
     
     def full_grid(self):
+        """Stops game if grid is full until either player resets"""
         for row in self.grid:
             for value in row:
                 if value == 0:
@@ -102,11 +111,13 @@ class Grid:
                     
 
     def reset_grid(self):
+        """Resetting the game"""
         for y in range(len(self.grid)):
             for x in range(len(self.grid[y])):
                 self.set_cell_value(x, y, 0)  
             
 
     def print_grid(self):
+        """Outputing the board"""
         for row in self.grid:
             print(row)
